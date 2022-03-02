@@ -98,4 +98,5 @@ func (bz *UserBiz) Login(ctx context.Context, in *userApiV1.LoginRequest) (err e
 		err = v1.ErrorUserExist("密码")
 		return
 	}
+	return
 }
