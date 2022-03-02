@@ -41,6 +41,14 @@ func (s *UserService) Register(ctx context.Context, in *userApiV1.RegisterReques
 
 func (s *UserService) Login(ctx context.Context, in *userApiV1.LoginRequest) (*userApiV1.LoginResponse, error) {
 	s.log.WithContext(ctx).Info("User Login Received ", "params", in)
-	s.userBiz.Login(ctx, in)
-	return &userApiV1.LoginResponse{}, nil
+	t, ex, err := s.userBiz.Login(ctx, in)
+	if err != nil {
+		return &userApiV1.LoginResponse{}, err
+	}
+	return &userApiV1.LoginResponse{
+		Data: &userApiV1.LoginResponse_LoginData{
+			Expire: uint64(ex),
+			Token:  t,
+		},
+	}, nil
 }

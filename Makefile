@@ -49,7 +49,7 @@ build:
 .PHONY: generate
 # generate
 generate:
-	go generate ./...
+	go generate ./... GOFLAGS=-mod=mod
 
 .PHONY: all
 # generate all

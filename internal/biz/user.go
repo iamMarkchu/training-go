@@ -3,10 +3,12 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
+	jwtv4 "github.com/golang-jwt/jwt/v4"
 	"gorm.io/gorm"
 	"time"
 	v1 "trainings-go/api/common/v1"
 	userApiV1 "trainings-go/api/user/v1"
+	"trainings-go/internal/conf"
 	"trainings-go/internal/data/model"
 	"trainings-go/internal/pkg/util"
 )
@@ -14,6 +16,7 @@ import (
 type UserBiz struct {
 	repo UserRepo
 	log  *log.Helper
+	conf *conf.Auth
 }
 
 type UserRepo interface {
@@ -22,8 +25,8 @@ type UserRepo interface {
 	SaveUser(ctx context.Context, user model.User) error
 }
 
-func NewUserBiz(repo UserRepo, logger log.Logger) *UserBiz {
-	return &UserBiz{repo: repo, log: log.NewHelper(logger)}
+func NewUserBiz(repo UserRepo, logger log.Logger, conf *conf.Auth) *UserBiz {
+	return &UserBiz{repo: repo, log: log.NewHelper(logger), conf: conf}
 }
 
 func (bz *UserBiz) GetUserInfo(ctx context.Context, hashId string) (id uint64) {
@@ -68,7 +71,7 @@ func (bz *UserBiz) checkRegister(ctx context.Context, in *userApiV1.RegisterRequ
 	return
 }
 
-func (bz *UserBiz) Login(ctx context.Context, in *userApiV1.LoginRequest) (err error) {
+func (bz *UserBiz) Login(ctx context.Context, in *userApiV1.LoginRequest) (t string, ex int64, err error) {
 	if len(in.GetName()) == 0 {
 		err = v1.ErrorUserNotFound("请输入用户名")
 		return
@@ -98,5 +101,24 @@ func (bz *UserBiz) Login(ctx context.Context, in *userApiV1.LoginRequest) (err e
 		err = v1.ErrorUserExist("密码")
 		return
 	}
+	claims := &ApiClaims{
+		data.Id,
+		jwtv4.RegisteredClaims{
+			NotBefore: jwtv4.NewNumericDate(time.Now()),
+			ExpiresAt: jwtv4.NewNumericDate(time.Now().Add(time.Second * 86400)),
+			Issuer:    "147258",
+		},
+	}
+	token := jwtv4.NewWithClaims(jwtv4.SigningMethodHS256, claims)
+	t, err = token.SignedString([]byte(bz.conf.Key))
+	if err != nil {
+		return
+	}
+	ex = 86400
 	return
+}
+
+type ApiClaims struct {
+	UserId uint64 `json:"user_id"`
+	jwtv4.RegisteredClaims
 }

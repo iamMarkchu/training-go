@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
+	"go.uber.org/zap"
 	"os"
 
+	zlog "github.com/go-kratos/kratos/contrib/log/zap/v2"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -46,7 +48,8 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
+	l := zlog.NewLogger(zap.NewExample())
+	logger := log.With(l,
 		"ts", log.DefaultTimestamp,
 		"caller", log.DefaultCaller,
 		"service.id", id,
@@ -60,7 +63,10 @@ func main() {
 			file.NewSource(flagconf),
 		),
 	)
-	defer c.Close()
+	defer func() {
+		c.Close()
+		l.Sync()
+	}()
 
 	if err := c.Load(); err != nil {
 		panic(err)
@@ -71,7 +77,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger)
+	app, cleanup, err := initApp(bc.Server, bc.Data, logger, bc.Auth)
 	if err != nil {
 		panic(err)
 	}

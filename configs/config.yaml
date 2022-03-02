@@ -2,14 +2,17 @@ server:
   http:
     addr: 0.0.0.0:8000
     timeout: 1s
+    authkey: "147258"
   grpc:
     addr: 0.0.0.0:9000
     timeout: 1s
 data:
   database:
     driver: mysql
-    source: debian-sys-maint:9mo7PZX1D4rFb9R3@tcp(127.0.0.1:3306)/training_base?charset=utf8mb4&parseTime=True&loc=Local
+    source: debian-sys-maint:ks15A21o9Ii5Ect0@tcp(127.0.0.1:3306)/training_base?charset=utf8mb4&parseTime=True&loc=Local
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+auth:
+  key: "147258"
