@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/go-kratos/kratos/v2 v2.2.0
-	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
+	github.com/go-kratos/swagger-api v1.0.1
 	github.com/google/wire v0.5.0
 	google.golang.org/genproto v0.0.0-20220302033224-9aa15565e42a
 	google.golang.org/grpc v1.44.0
