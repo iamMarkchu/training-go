@@ -5,6 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/auth/jwt"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
+	"github.com/go-kratos/kratos/v2/middleware/ratelimit"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
@@ -40,6 +41,8 @@ func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger,
 			selector.Server(jwt.Server(func(token *jwtv4.Token) (interface{}, error) {
 				return []byte(ca.GetKey()), nil
 			}, jwt.WithSigningMethod(jwtv4.SigningMethodHS256))).Match(NewWhiteListMatcher()).Build(),
+			// 限流
+			ratelimit.Server(),
 		),
 	}
 	if c.Http.Network != "" {
