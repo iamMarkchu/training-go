@@ -22,7 +22,6 @@ func NewUserService(userBiz *biz.UserBiz, logger log.Logger) *UserService {
 // SayHello implements user.GreeterServer
 func (s *UserService) SayHello(ctx context.Context, in *userApiV1.HelloRequest) (*userApiV1.HelloReply, error) {
 	s.log.WithContext(ctx).Infof("User SayHello Received: %v", in.GetName())
-
 	if in.GetName() == "error" {
 		return nil, v1.ErrorUserNotFound("user not found: %s", in.GetName())
 	}
