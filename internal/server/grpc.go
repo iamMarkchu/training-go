@@ -5,13 +5,15 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
+	actionApiV1 "trainings-go/api/action/v1"
+	categoryApiV1 "trainings-go/api/category/v1"
 	userApiV1 "trainings-go/api/user/v1"
 	"trainings-go/internal/conf"
 	"trainings-go/internal/service"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(c *conf.Server, user *service.UserService, logger log.Logger) *grpc.Server {
+func NewGRPCServer(c *conf.Server, user *service.UserService, logger log.Logger, category *service.CategorySrv, action *service.ActionService) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -29,5 +31,7 @@ func NewGRPCServer(c *conf.Server, user *service.UserService, logger log.Logger)
 	}
 	srv := grpc.NewServer(opts...)
 	userApiV1.RegisterUserServer(srv, user)
+	categoryApiV1.RegisterCategoryServer(srv, category)
+	actionApiV1.RegisterActionServer(srv, action)
 	return srv
 }

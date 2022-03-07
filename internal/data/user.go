@@ -74,3 +74,15 @@ func (r *userRepo) SaveUser(ctx context.Context, user model.User) (err error) {
 	})
 	return
 }
+
+func (r *userRepo) MGetUserInfo(ctx context.Context, uids []uint64) (res []model.User, err error) {
+	r.log.WithContext(ctx).Infof("userRepo MGetUserInfo Received:%s", uids)
+	res = []model.User{}
+	err = r.data.db.Table("iron_users").Where("id in (?)", uids).Find(&res).Error
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		r.log.WithContext(ctx).Error("userRepo GetUserByName error", "error", err)
+		return
+	}
+	r.log.WithContext(ctx).Info(res)
+	return
+}

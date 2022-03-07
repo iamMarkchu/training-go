@@ -53,7 +53,10 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
 }
 
 // Set global trace provider
-func setTracerProvider(url string) error {
+func setTracerProvider(url string, enable bool) error {
+	if !enable {
+		return nil
+	}
 	// Create the Jaeger exporter
 	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
 	if err != nil {
@@ -105,8 +108,7 @@ func main() {
 		panic(err)
 	}
 	//启动链路追踪
-	err := setTracerProvider("http://localhost:14268/api/traces")
-	if err != nil {
+	if err := setTracerProvider(bc.Trace.Url, bc.Trace.Enable); err != nil {
 		panic(err)
 	}
 	app, cleanup, err := initApp(bc.Server, bc.Data, logger, bc.Auth)

@@ -7,9 +7,11 @@ import (
 	"gorm.io/gorm"
 	"time"
 	v1 "trainings-go/api/common/v1"
+	userCoreApi "trainings-go/api/user/core"
 	userApiV1 "trainings-go/api/user/v1"
 	"trainings-go/internal/conf"
 	"trainings-go/internal/data/model"
+	"trainings-go/internal/pkg/define"
 	"trainings-go/internal/pkg/util"
 )
 
@@ -22,7 +24,8 @@ type UserBiz struct {
 type UserRepo interface {
 	GetUserInfo(context.Context, string) uint64
 	GetUserByName(ctx context.Context, name string) (model.User, error)
-	SaveUser(ctx context.Context, user model.User) error
+	SaveUser(context.Context, model.User) error
+	MGetUserInfo(context.Context, []uint64) ([]model.User, error)
 }
 
 func NewUserBiz(repo UserRepo, logger log.Logger, conf *conf.Auth) *UserBiz {
@@ -101,7 +104,7 @@ func (bz *UserBiz) Login(ctx context.Context, in *userApiV1.LoginRequest) (t str
 		err = v1.ErrorUserExist("密码")
 		return
 	}
-	claims := &ApiClaims{
+	claims := &define.ApiClaims{
 		data.Id,
 		jwtv4.RegisteredClaims{
 			NotBefore: jwtv4.NewNumericDate(time.Now()),
@@ -118,7 +121,18 @@ func (bz *UserBiz) Login(ctx context.Context, in *userApiV1.LoginRequest) (t str
 	return
 }
 
-type ApiClaims struct {
-	UserId uint64 `json:"user_id"`
-	jwtv4.RegisteredClaims
+func (bz *UserBiz) MGetUserInfo(ctx context.Context, in *userCoreApi.MGetInfoRequest) (res map[uint64]*userCoreApi.User, err error) {
+	res = make(map[uint64]*userCoreApi.User)
+	list, err := bz.repo.MGetUserInfo(ctx, in.GetUids())
+	if err != nil {
+		return
+	}
+	for _, user := range list {
+		res[user.Id] = &userCoreApi.User{
+			Id:       user.Id,
+			Name:     user.Name,
+			NickName: user.NickName,
+		}
+	}
+	return
 }

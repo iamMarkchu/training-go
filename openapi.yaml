@@ -3,10 +3,200 @@
 
 openapi: 3.0.3
 info:
-    title: User API
-    description: The greeting service definition.
+    title: ""
     version: 0.0.1
 paths:
+    /action/add:
+        post:
+            tags:
+                - Action
+            description: 创建动作
+            operationId: Action_CreateAction
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateActionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateActionReply'
+    /action/delete:
+        post:
+            tags:
+                - Action
+            description: 删除动作
+            operationId: Action_DeleteAction
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DeleteActionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteActionReply'
+    /action/get/{id}:
+        get:
+            tags:
+                - Action
+            description: 获取动作
+            operationId: Action_GetAction
+            parameters:
+                - name: id
+                  in: path
+                  description: id
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetActionReply'
+    /action/list:
+        get:
+            tags:
+                - Action
+            description: 获取动作列表
+            operationId: Action_ListAction
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListActionReply'
+    /action/update:
+        post:
+            tags:
+                - Action
+            description: 更新动作
+            operationId: Action_UpdateAction
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateActionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateActionReply'
+    /category/add:
+        post:
+            tags:
+                - Category
+            description: 添加类别
+            operationId: Category_Add
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AddResponse'
+    /category/delete:
+        post:
+            tags:
+                - Category
+            description: 删除类别
+            operationId: Category_Delete
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DeleteRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteResponse'
+    /category/list:
+        get:
+            tags:
+                - Category
+            description: 获取列表
+            operationId: Category_List
+            parameters:
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: limit
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ListResponse'
+    /category/update:
+        post:
+            tags:
+                - Category
+            description: 编辑类别
+            operationId: Category_Update
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/UpdateResponse'
+    /helloworld/{name}:
+        get:
+            tags:
+                - Greeter
+            description: Sends a greeting
+            operationId: Greeter_SayHello
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/HelloReply'
     /user/v1/hello/{name}:
         get:
             tags:
@@ -66,12 +256,180 @@ paths:
                                 $ref: '#/components/schemas/RegisterResponse'
 components:
     schemas:
+        AddRequest:
+            type: object
+            properties:
+                parentId:
+                    type: integer
+                    description: 父类别
+                    format: uint64
+                name:
+                    type: string
+                    description: 类别名称
+                description:
+                    type: string
+                    description: 类别描述
+            description: 添加类别
+        AddResponse:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ResponseData'
+        CategoryItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                parentId:
+                    type: integer
+                    description: 父类别
+                    format: uint64
+                name:
+                    type: string
+                    description: 类别名称
+                description:
+                    type: string
+                    description: 类别描述
+                status:
+                    type: integer
+                    description: 状态
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户id
+                    format: uint32
+                userName:
+                    type: string
+                    description: 用户名
+                ctime:
+                    type: integer
+                    description: 创建时间
+                    format: uint64
+                utime:
+                    type: integer
+                    description: 修改时间
+                    format: uint64
+        CreateActionReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ResponseData'
+        CreateActionRequest:
+            type: object
+            properties:
+                cateId:
+                    type: integer
+                    description: 类别id
+                    format: uint64
+                name:
+                    type: string
+                    description: 动作名称
+                description:
+                    type: string
+                    description: 动作描述
+            description: 创建动作
+        DeleteActionReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ResponseData'
+        DeleteActionRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: id
+                    format: uint64
+        DeleteRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+            description: 删除请求
+        DeleteResponse:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ResponseData'
+            description: 删除响应
+        GetActionReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
         HelloReply:
             type: object
             properties:
                 message:
                     type: string
             description: The response message containing the greetings
+        HelloReply:
+            type: object
+            properties:
+                message:
+                    type: string
+            description: The response message containing the greetings
+        ListActionReply:
+            type: object
+            properties: {}
+        ListResponse:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ListResponseData'
+            description: list响应
+        ListResponseData:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: uint32
+                list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CategoryItem'
         LoginRequest:
             type: object
             properties:
@@ -139,5 +497,83 @@ components:
             type: object
             properties: {}
             description: data
+        ResponseData:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+            description: data
+        ResponseData:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+            description: data
+        UpdateActionReply:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ResponseData'
+        UpdateActionRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: id
+                    format: uint64
+                cateId:
+                    type: integer
+                    description: 类别id
+                    format: uint64
+                name:
+                    type: string
+                    description: 动作名称
+                description:
+                    type: string
+                    description: 动作描述
+        UpdateRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                parentId:
+                    type: integer
+                    description: 父类别
+                    format: uint64
+                name:
+                    type: string
+                    description: 类别名称
+                description:
+                    type: string
+                    description: 类别描述
+            description: 编辑类别请求
+        UpdateResponse:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ResponseData'
+            description: 编辑类别相应
 tags:
+    - name: Action
+    - name: Category
+    - name: Greeter
+      description: The greeting service definition.
     - name: User
+      description: The greeting service definition.

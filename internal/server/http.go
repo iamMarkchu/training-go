@@ -12,6 +12,8 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/go-kratos/swagger-api/openapiv2"
 	jwtv4 "github.com/golang-jwt/jwt/v4"
+	actionApiV1 "trainings-go/api/action/v1"
+	categoryApiV1 "trainings-go/api/category/v1"
 	userApiV1 "trainings-go/api/user/v1"
 	"trainings-go/internal/conf"
 	"trainings-go/internal/service"
@@ -31,7 +33,7 @@ func NewWhiteListMatcher() selector.MatchFunc {
 }
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger, ca *conf.Auth) *http.Server {
+func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger, ca *conf.Auth, category *service.CategorySrv, action *service.ActionService) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -58,5 +60,7 @@ func NewHTTPServer(c *conf.Server, user *service.UserService, logger log.Logger,
 	openAPIhandler := openapiv2.NewHandler()
 	srv.HandlePrefix("/q/", openAPIhandler)
 	userApiV1.RegisterUserHTTPServer(srv, user)
+	categoryApiV1.RegisterCategoryHTTPServer(srv, category)
+	actionApiV1.RegisterActionHTTPServer(srv, action)
 	return srv
 }

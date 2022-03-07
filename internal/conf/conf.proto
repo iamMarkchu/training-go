@@ -9,6 +9,7 @@ message Bootstrap {
   Server server = 1;
   Data data = 2;
   Auth auth = 3;
+  Trace trace = 4;
 }
 
 message Server {
@@ -43,4 +44,12 @@ message Data {
 
 message Auth {
   string key = 1;
+}
+
+// 链路追踪
+message Trace {
+  // 链路上报
+  string url = 1;
+  // 是否开启
+  bool enable = 2;
 }
