@@ -71,6 +71,22 @@ paths:
                 - Action
             description: 获取动作列表
             operationId: Action_ListAction
+            parameters:
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: limit
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: cateId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint64
             responses:
                 "200":
                     description: OK
@@ -256,6 +272,39 @@ paths:
                                 $ref: '#/components/schemas/RegisterResponse'
 components:
     schemas:
+        Action:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: id
+                    format: uint64
+                cateId:
+                    type: integer
+                    description: 类别id
+                    format: uint64
+                name:
+                    type: string
+                    description: 动作名称
+                description:
+                    type: string
+                    description: 动作描述
+                status:
+                    type: integer
+                    description: 状态
+                    format: uint32
+                user:
+                    $ref: '#/components/schemas/User'
+                ctime:
+                    type: integer
+                    description: 创建时间
+                    format: uint64
+                utime:
+                    type: integer
+                    description: 修改时间
+                    format: uint64
+                category:
+                    $ref: '#/components/schemas/CategoryItem'
         AddRequest:
             type: object
             properties:
@@ -406,7 +455,26 @@ components:
             description: The response message containing the greetings
         ListActionReply:
             type: object
-            properties: {}
+            properties:
+                code:
+                    type: integer
+                    description: 响应码
+                    format: uint32
+                message:
+                    type: string
+                    description: 提示
+                data:
+                    $ref: '#/components/schemas/ListActionReplyData'
+        ListActionReplyData:
+            type: object
+            properties:
+                total:
+                    type: integer
+                    format: uint64
+                list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Action'
         ListResponse:
             type: object
             properties:
@@ -570,6 +638,20 @@ components:
                 data:
                     $ref: '#/components/schemas/ResponseData'
             description: 编辑类别相应
+        User:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: id
+                    format: uint64
+                name:
+                    type: string
+                    description: 用户名
+                nickName:
+                    type: string
+                    description: 昵称
+            description: 用户信息
 tags:
     - name: Action
     - name: Category

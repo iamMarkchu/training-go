@@ -30,7 +30,7 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, au
 	categoryBiz := biz.NewCategoryBiz(logger, categoryRepo, userBiz)
 	categorySrv := service.NewCategorySrv(logger, categoryBiz)
 	actionRepo := data.NewActionRepo(logger, dataData)
-	actionBiz := biz.NewActionBiz(logger, actionRepo, userBiz)
+	actionBiz := biz.NewActionBiz(logger, actionRepo, userBiz, categoryBiz)
 	actionService := service.NewActionService(actionBiz, logger)
 	httpServer := server.NewHTTPServer(confServer, userService, logger, auth, categorySrv, actionService)
 	grpcServer := server.NewGRPCServer(confServer, userService, logger, categorySrv, actionService)
